@@ -15,6 +15,8 @@ import app.pojo.User;
 public class MappedSql {
 
 	// **************************
+	
+	
 	public String createTable(Object o) {
 
 		StringBuilder sb = new StringBuilder();
@@ -78,51 +80,48 @@ public class MappedSql {
 		}
 		sb.append(",");
 		// Searching my primary keys =D
-		{
 			sb.append("\n\tPRIMARY KEY(");
-
-			for (int i = 0, searchs = 0; i < f.length; i++) {
-
-				Field field = f[i];
-
-				if (field.isAnnotationPresent(Column.class)) {
-
-					Column annId = field.getAnnotation(Column.class);
-
-					if (annId.pk()) {
-
-						if (searchs > 0) {
-
-							sb.append(",");
-						}
-
-						if (annId.name().isEmpty()) {
-
-							sb.append(field.getName().toLowerCase());
-						} else {
-
-							sb.append(annId.name().toLowerCase());
-						}
-						searchs++;
-					}
-
-				}
-
-			}
+			getPkinFields(sb, f);
 			sb.append(")");
 
-		}
+		
 		sb.append("\n);");
 
 		return sb.toString();
 	}
 
-	/**
-	 * 
-	 * 
-	 * @param o
-	 * @return
-	 */
+	private void getPkinFields(StringBuilder sb, Field[] f) {
+		for (int i = 0, searchs = 0; i < f.length; i++) {
+
+			Field field = f[i];
+
+			if (field.isAnnotationPresent(Column.class)) {
+
+				Column annId = field.getAnnotation(Column.class);
+
+				if (annId.pk()) {
+
+					if (searchs > 0) {
+
+						sb.append(",");
+					}
+
+					if (annId.name().isEmpty()) {
+
+						sb.append(field.getName().toLowerCase());
+					} else {
+
+						sb.append(annId.name().toLowerCase());
+					}
+					searchs++;
+				}
+
+			}
+
+		}
+	}
+	
+	//Insert para popular a base de dados.
 	public String getIsert(Object o, List<String> list) {
 
 		Class<?> clazz = o.getClass();
@@ -184,7 +183,8 @@ public class MappedSql {
 
 		return sb.toString();
 	}
-
+	
+	//Select.
 	public String getSearch(Object o) {
 
 		Class<?> clazz = o.getClass();
@@ -204,7 +204,8 @@ public class MappedSql {
 
 		return sb.toString();
 	}
-
+	
+	//Drop na tabela desejada.
 	public String getDrop(Object o) {
 
 		Class<?> clazz = o.getClass();
@@ -225,6 +226,7 @@ public class MappedSql {
 		return sb.toString();
 	}
 
+	//Query para deletar algo na base de dados pelas chaves primárias.
 	public String deleteFrom(Object o) {
 		StringBuilder sb = new StringBuilder();
 
@@ -233,49 +235,22 @@ public class MappedSql {
 		sb.append("DELETE FROM ");
 		sb.append(clazz.getSimpleName());
 		sb.append(" WHERE ");
-
-		for (int i = 0, searchs = 0; i < f.length; i++) {
-
-			Field field = f[i];
-
-			if (field.isAnnotationPresent(Column.class)) {
-
-				Column annId = field.getAnnotation(Column.class);
-
-				if (annId.pk()) {
-
-					if (searchs > 0) {
-
-						sb.append(",");
-					}
-
-					if (annId.name().isEmpty()) {
-
-						sb.append(field.getName().toLowerCase());
-					} else {
-
-						sb.append(annId.name().toLowerCase());
-					}
-					searchs++;
-				}
-
-			}
-
-		}
-
+		getPkinFields(sb, f);
+		sb.append(" = ");
 		return sb.toString();
 
 	}
 
 	// ------------------------------------------------------
 	
-	public static void main(String[] args) {
-		
-		
-		MappedSql sql = new MappedSql();
-		
-		System.out.println(sql.deleteFrom(new User()));
-		
-		
-	}
+//Testes com a classe !
+//	public static void main(String[] args) {
+//		
+//		
+//		MappedSql sql = new MappedSql();
+//		
+//		System.out.println(sql.deleteFrom(new User()));
+//		
+//		
+//	}
 }
