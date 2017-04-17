@@ -12,6 +12,7 @@ import app.database.DataAcess;
 import app.database.MappedSql;
 import app.pojo.Animal;
 import app.pojo.Carro;
+import app.pojo.Professor;
 import app.pojo.User;
 
 import java.awt.GridBagLayout;
@@ -80,9 +81,7 @@ public class TelaPrincipal extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 
-		Carro carro  = new Carro(); // Importante !!! testar outros pojos aqui !
-//		User user = new User();
-		Animal animal = new Animal();
+		Animal animal = new Animal(); // Importante !!! testar outros pojos aqui !
 		
 		// GridBagLayout e propriedades !
 		getGridBagLayout();
