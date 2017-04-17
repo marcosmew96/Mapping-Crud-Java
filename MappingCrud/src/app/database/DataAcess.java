@@ -20,7 +20,7 @@ public class DataAcess {
 		Connection con = null;
 
 		try {
-			con = DriverManager.getConnection("jdbc:h2:tcp://localhost/~/test2", "sa", "");
+			con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "1234560mar");
 
 		} catch (SQLException e) {
 
@@ -54,7 +54,7 @@ public class DataAcess {
 
 		List lista = new ArrayList<>();
 
-		Statement ps;
+		PreparedStatement ps;
 
 		Class<?> clazz = o.getClass();
 
@@ -64,8 +64,8 @@ public class DataAcess {
 
 		try {
 
-			ps = con.createStatement();
-			ResultSet rs = ps.executeQuery(query);
+			ps = con.prepareStatement(query);
+			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
 
@@ -81,7 +81,7 @@ public class DataAcess {
 
 		} catch (SQLException e) {
 
-			JOptionPane.showMessageDialog(null, "Problema na busca !");
+			JOptionPane.showMessageDialog(null, "A lista pode estar vazia, ou algum problema de conexao !");
 		}
 
 		return lista;
@@ -92,12 +92,12 @@ public class DataAcess {
 
 		Connection con = getConnection();
 
-		Statement ps;
+		PreparedStatement ps;
 
 		try {
 
-			ps = con.createStatement();
-			ps.execute(query);
+			ps = con.prepareStatement(query);
+			ps.executeUpdate();
 		} catch (SQLException e) {
 
 			e.printStackTrace();
@@ -113,10 +113,10 @@ public class DataAcess {
 		try {
 
 			ps = con.prepareStatement(query);
-			ps.executeQuery();
+			ps.executeUpdate();
 		} catch (SQLException e) {
 
-			JOptionPane.showMessageDialog(null, "Algo invalido !");
+			JOptionPane.showMessageDialog(null, " ID invalido, ou digitou errado !");
 		}
 	}
 
@@ -124,16 +124,16 @@ public class DataAcess {
 
 		Connection con = getConnection();
 
-		Statement ps;
+		PreparedStatement ps;
 
 		try {
 
-			ps = con.createStatement();
-			ps.execute(query);
+			ps = con.prepareStatement(query);
+			ps.executeUpdate();
 
 		} catch (SQLException e) {
 
-			JOptionPane.showMessageDialog(null, "Algo invalido !");
+			JOptionPane.showMessageDialog(null, " Podem haver tabelas repetidas , ou , erro na conexao !");
 		}
 	}
 

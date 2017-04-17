@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
 public @interface Column {
 	
 	String name();
-	boolean pk();
+	boolean pk() default false;
 }

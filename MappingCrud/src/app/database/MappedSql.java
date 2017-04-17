@@ -10,13 +10,14 @@ import javax.swing.JOptionPane;
 
 import app.annotations.Column;
 import app.annotations.Table;
+import app.pojo.Animal;
+import app.pojo.Carro;
 import app.pojo.User;
 
 public class MappedSql {
 
 	// **************************
-	
-	
+
 	public String createTable(Object o) {
 
 		StringBuilder sb = new StringBuilder();
@@ -45,15 +46,15 @@ public class MappedSql {
 
 			if (field.isAnnotationPresent(Column.class)) {
 
-				nameColumn = field.getAnnotation(Column.class).name().toLowerCase();
+				nameColumn = field.getAnnotation(Column.class).name();
 			} else {
 
-				nameColumn = field.getName().toLowerCase();
+				nameColumn = field.getName();
 			}
 
 			// type Column ( integer , varchar , numeric , etc ) !
 
-			if (field.getType().equals(int.class)) {
+			if (field.getType().equals(int.class) || field.getType().equals(Integer.class)) {
 
 				typeColumn = "INTEGER";
 			} else if (field.getType().equals(BigDecimal.class)) {
@@ -80,48 +81,38 @@ public class MappedSql {
 		}
 		sb.append(",");
 		// Searching my primary keys =D
-			sb.append("\n\tPRIMARY KEY(");
-			getPkinFields(sb, f);
-			sb.append(")");
+		sb.append("\n\tPRIMARY KEY(");
+		getPkinFields(sb, f);
+		sb.append(")");
 
-		
 		sb.append("\n);");
 
 		return sb.toString();
 	}
 
 	private void getPkinFields(StringBuilder sb, Field[] f) {
+		
+		
 		for (int i = 0, searchs = 0; i < f.length; i++) {
 
 			Field field = f[i];
 
-			if (field.isAnnotationPresent(Column.class)) {
-
-				Column annId = field.getAnnotation(Column.class);
-
-				if (annId.pk()) {
-
-					if (searchs > 0) {
-
-						sb.append(",");
-					}
-
-					if (annId.name().isEmpty()) {
-
-						sb.append(field.getName().toLowerCase());
-					} else {
-
-						sb.append(annId.name().toLowerCase());
-					}
-					searchs++;
+			if(field.isAnnotationPresent(Column.class)){
+				
+				
+				Column id = field.getAnnotation(Column.class);
+				
+				if(id.pk() ==true){
+					
+					sb.append(id.name());
 				}
-
+				
 			}
 
 		}
 	}
-	
-	//Insert para popular a base de dados.
+
+	// Insert para popular a base de dados.
 	public String getIsert(Object o, List<String> list) {
 
 		Class<?> clazz = o.getClass();
@@ -148,9 +139,10 @@ public class MappedSql {
 
 			String nomeAtributo;
 
-			if (fields.isAnnotationPresent(Table.class)) {
+			if (fields.isAnnotationPresent(Column.class)) {
 
-				nomeAtributo = fields.getAnnotation(Table.class).name();
+				nomeAtributo = fields.getAnnotation(Column.class).name();
+			
 			} else {
 
 				nomeAtributo = fields.getName().toLowerCase();
@@ -183,8 +175,8 @@ public class MappedSql {
 
 		return sb.toString();
 	}
-	
-	//Select.
+
+	// Select.
 	public String getSearch(Object o) {
 
 		Class<?> clazz = o.getClass();
@@ -204,8 +196,8 @@ public class MappedSql {
 
 		return sb.toString();
 	}
-	
-	//Drop na tabela desejada.
+
+	// Drop na tabela desejada.
 	public String getDrop(Object o) {
 
 		Class<?> clazz = o.getClass();
@@ -226,31 +218,40 @@ public class MappedSql {
 		return sb.toString();
 	}
 
-	//Query para deletar algo na base de dados pelas chaves primárias.
-	public String deleteFrom(Object o) {
+	// Query para deletar algo na base de dados pelas chaves primárias.
+	public String deleteFrom(Object o , int opcao) {
 		StringBuilder sb = new StringBuilder();
 
+		
+		
 		Class<?> clazz = o.getClass();
 		Field[] f = clazz.getDeclaredFields();
 		sb.append("DELETE FROM ");
-		sb.append(clazz.getSimpleName());
+		
+		String nomeTabela;
+		
+		if(clazz.isAnnotationPresent(Table.class)){
+			
+			nomeTabela = clazz.getAnnotation(Table.class).name();
+		}
+		else{
+			
+			nomeTabela = clazz.getSimpleName().toLowerCase();
+			
+		}
+		sb.append(nomeTabela);
 		sb.append(" WHERE ");
 		getPkinFields(sb, f);
 		sb.append(" = ");
+		sb.append(opcao);
 		return sb.toString();
 
 	}
 
 	// ------------------------------------------------------
 	
-//Testes com a classe !
-//	public static void main(String[] args) {
-//		
-//		
-//		MappedSql sql = new MappedSql();
-//		
-//		System.out.println(sql.deleteFrom(new User()));
-//		
-//		
-//	}
+
+	
+
+
 }

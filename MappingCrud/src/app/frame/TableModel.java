@@ -7,7 +7,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import app.annotations.Column;
-import app.annotations.Label;
+
 
 public class TableModel extends AbstractTableModel {
 
@@ -40,7 +40,7 @@ public class TableModel extends AbstractTableModel {
 
 		for (Field f : clazz.getDeclaredFields()) {
 
-			atts.add(f.getAnnotation(Label.class).nameLbl().toString());
+			atts.add(f.getAnnotation(Column.class).name().toString());
 
 		}
 
